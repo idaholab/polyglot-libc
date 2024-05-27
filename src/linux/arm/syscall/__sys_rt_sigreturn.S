@@ -1,0 +1,34 @@
+/* This file is part of the Polyglot C Library.
+
+   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
+
+   The Polyglot C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the License,
+   or (at your option) any later version.
+
+   The Polyglot C library is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+   for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <https://www.gnu.org/licenses/>. */
+
+#include <bits/linux/syscall.h>
+
+.section .note.GNU-stack,""
+
+.text
+.globl      __sys_rt_sigreturn
+.type       __sys_rt_sigreturn,%function
+__sys_rt_sigreturn:
+#if defined(__target_abi_eabi)
+    mov     r7, #__NR_rt_sigreturn
+    swi     0x0
+#elif defined(__target_abi_oabi)
+    swi     __NR_rt_sigreturn
+#else
+#error "Unsupported ARM ABI for __rt_sigreturn"
+#endif
+
