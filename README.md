@@ -45,7 +45,7 @@ arcane, platform-specific details.
 [pdclib]:   https://github.com/DevSolar/pdclib
 [cc0]:      COPYING.CC0
 [douglea]:  https://gee.cs.oswego.edu/dl/
-[dlmalloc]: src/_dlmalloc/dlmalloc.c
+[dlmalloc]: src/_dlmalloc/malloc.c
 [ianatzdb]: https://www.iana.org/time-zones/
 [glibc]:    https://www.gnu.org/software/libc/
 
