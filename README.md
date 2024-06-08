@@ -21,8 +21,8 @@ We inherit two third party software components from PDCLib, which are noted here
 along with their specific licenses:
 
 - `calloc()`, `free()`, `malloc()`, and `realloc()` (from
-  [`dlmalloc.c`][dlmalloc]) are included courtesy of [Doug Lea][douglea]; this
-  code is also licensed as [CC0][cc0].
+  [`_dlmalloc/malloc.c`][dlmalloc]) are included courtesy of [Doug
+  Lea][douglea]; this code is also licensed as [CC0][cc0].
 - Large parts of the functionality behind `<time.h>` is included courtesy of the
   IANA's [Time Zone Database][ianatzdb] (from `tzcode2020a.tar.gz`), which is in
   the public domain.
