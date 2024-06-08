@@ -1,27 +1,17 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* OS glue functions declaration <_PDCLIB_glue.h>
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* OS glue functions declaration <_PDCLIB_glue.h> */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #ifndef _PDCLIB_GLUE_H
 #define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 
-#include "pdclib/_PDCLIB_int.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "pdclib/_PDCLIB_internal.h"
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 2                                                          */
@@ -35,7 +25,7 @@
 /* A system call that terminates the calling process, returning a given status
    to the environment.
 */
-_PDCLIB_LOCAL void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
+_PDCLIB_LOCAL _PDCLIB_Noreturn void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
 
 
 /* stdio.h */
@@ -95,5 +85,9 @@ _PDCLIB_LOCAL int _PDCLIB_remove( const char * pathname );
    done by standard rename() already.
 */
 _PDCLIB_LOCAL int _PDCLIB_rename( const char * oldpath, const char * newpath );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

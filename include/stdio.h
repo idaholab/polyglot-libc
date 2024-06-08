@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* Input/output <stdio.h>
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* Input/output <stdio.h> */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #ifndef _PDCLIB_STDIO_H
 #define _PDCLIB_STDIO_H _PDCLIB_STDIO_H
@@ -26,7 +12,7 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -43,10 +29,10 @@ typedef _PDCLIB_size_t size_t;
 #define _IOLBF (1u<<1)
 #define _IONBF (1u<<2)
 
-/* The following are platform-dependant, and defined in _PDCLIB_config.h. */
+/* The following are platform-dependent, and defined in _PDCLIB_config.h. */
 typedef struct _PDCLIB_fpos_t fpos_t;
 typedef struct _PDCLIB_file_t FILE;
-#define EOF -1
+#define EOF (-1)
 #define BUFSIZ _PDCLIB_BUFSIZ
 #define FOPEN_MAX _PDCLIB_FOPEN_MAX
 #define FILENAME_MAX _PDCLIB_FILENAME_MAX
@@ -55,7 +41,6 @@ typedef struct _PDCLIB_file_t FILE;
 
 /* See fseek(), third argument */
 #include <target/seek.h>
-#include <sys/types.h>
 
 extern FILE * stdin;
 extern FILE * stdout;
@@ -179,6 +164,8 @@ _PDCLIB_PUBLIC FILE * fopen( const char * _PDCLIB_restrict filename, const char 
    of the standard streams with files. It does *not* support mode changes on
    standard streams.
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
+
+   Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
 _PDCLIB_PUBLIC FILE * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
 
@@ -752,7 +739,6 @@ _PDCLIB_PUBLIC int fgetpos( FILE * _PDCLIB_restrict stream, fpos_t * _PDCLIB_res
    the error indicator for the given stream is set.
 */
 _PDCLIB_PUBLIC int fseek( FILE * stream, long int offset, int whence );
-_PDCLIB_PUBLIC int fseeko( FILE * stream, off_t offset, int whence );
 
 /* Set the position indicator (and, where appropriate the mbstate_t status
    object) for the given stream to the given pos object (created by an earlier
@@ -774,7 +760,6 @@ _PDCLIB_PUBLIC int fsetpos( FILE * stream, const fpos_t * pos );
    TODO: Implementation-defined errno setting for ftell().
 */
 _PDCLIB_PUBLIC long int ftell( FILE * stream );
-_PDCLIB_PUBLIC off_t ftello( FILE * stream );
 
 /* Equivalent to (void)fseek( stream, 0L, SEEK_SET ), except that the error
    indicator for the stream is also cleared.
@@ -820,11 +805,102 @@ typedef int errno_t;
 typedef _PDCLIB_size_t rsize_t;
 #endif
 
-/* None of these are implemented yet. Placeholder declarations. */
+/* Open a temporary file with mode "wb+", i.e. binary-update. Remove the file
+   automatically if it is closed or the program exits normally (by returning
+   from main() or calling exit()).
+   If successful, the FILE * pointed to by streamptr will be set to point at
+   the opened file handle, and the function returns zero. If unsuccessful,
+   the FILE * pointed to by streamptr will be set to NULL and a non-zero
+   value is returned.
+   The following conditions will be considered runtime constraint violations:
+   - streamptr being NULL.
+   In case of a constraint violation, no file is being created.
+   This implementation does not remove temporary files if the process aborts
+   abnormally (e.g. abort()).
+*/
 _PDCLIB_PUBLIC errno_t tmpfile_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr );
-_PDCLIB_PUBLIC errno_t tmpnam_s( char * s, rsize_t maxsize );
+
+/* Open the file with the given filename in the given mode, and sets the given
+   streamptr to point at the file handle for that file, in which error and
+   end-of-file indicator are cleared. Defined values for mode are:
+
+   READ MODES
+                      text files        binary files
+   without update     "r"               "rb"
+   with update        "r+"              "rb+" or "r+b"
+
+   Opening in read mode fails if no file with the given filename exists, or if
+   cannot be read.
+
+   WRITE MODES
+                      text files        binary files
+   without update     "w"               "wb"
+   with update        "w+"              "wb+" or "w+b"
+
+   With write modes, if a file with the given filename already exists, it is
+   truncated to zero length.
+
+   APPEND MODES
+                      text files        binary files
+   without update     "a"               "ab"
+   with update        "a+"              "ab+" or "a+b"
+
+   With update modes, if a file with the given filename already exists, it is
+   not truncated to zero length, but all writes are forced to end-of-file (this
+   regardless to fseek() calls). Note that binary files opened in append mode
+   might have their end-of-file padded with '\0' characters.
+
+   Update modes mean that both input and output functions can be performed on
+   the stream, but output must be terminated with a call to either fflush(),
+   fseek(), fsetpos(), or rewind() before input is performed, and input must
+   be terminated with a call to either fseek(), fsetpos(), or rewind() before
+   output is performed, unless input encountered end-of-file.
+
+   If a text file is opened with update mode, the implementation is at liberty
+   to open a binary stream instead. This implementation honors the exact mode
+   given.
+
+   The stream is fully buffered if and only if it can be determined not to
+   refer to an interactive device.
+
+   If the mode string begins with but is longer than one of the above sequences
+   the implementation is at liberty to ignore the additional characters, or do
+   implementation-defined things. This implementation only accepts the exact
+   modes above.
+
+   The following conditions will be considered runtime constraint violations:
+   - streamptr being NULL.
+   - filename being NULL.
+   - mode being NULL.
+   In case of a constraint violation, no file is opened. If streamptr is not
+   NULL, *streamptr is set to NULL.
+
+   Returns zero if successful, non-zero otherwise.
+*/
 _PDCLIB_PUBLIC errno_t fopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
+
+/* Close any file currently associated with the given stream. Open the file
+   identified by the given filename with the given mode (equivalent to fopen()),
+   and associate it with the given stream. If filename is a NULL pointer,
+   attempt to change the mode of the given stream.
+   This implementation allows any mode changes on "real" files, and associating
+   of the standard streams with files. It does *not* support mode changes on
+   standard streams.
+   (Primary use of this function is to redirect stdin, stdout, and stderr.)
+
+   The following conditions will be considered runtime constraint violations:
+   - newstreamptr being NULL.
+   - mode being NULL.
+   - stream being NULL.
+   In case of a constraint violation, no attempt is made to close or open any
+   file. If newstreamptr is not NULL, *newstreamptr is set to NULL.
+
+   Returns zero if successfull, non-zero otherwise.
+*/
 _PDCLIB_PUBLIC errno_t freopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict newstreamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
+
+/* None of these are implemented yet. Placeholder declarations. */
+_PDCLIB_PUBLIC errno_t tmpnam_s( char * s, rsize_t maxsize );
 _PDCLIB_PUBLIC int fprintf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 _PDCLIB_PUBLIC int fscanf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 _PDCLIB_PUBLIC int printf_s( const char * _PDCLIB_restrict format, ... );

@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* strerror_s( char *, rsize_t, errno_t )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* strerror_s( char *, rsize_t, errno_t ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
@@ -71,14 +57,11 @@ errno_t strerror_s( char * s, rsize_t maxsize, errno_t errnum )
 int main( void )
 {
 #if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
-    /* FIXME: reimplement to not use _PDCLIB_ERRNO_MAX */
-    /*
     char s[14];
     TESTCASE( strerror_s( s, 14, _PDCLIB_ERRNO_MAX ) == 0 );
     TESTCASE( strcmp( s, "unknown error" ) == 0 );
     TESTCASE( strerror_s( s, 13, _PDCLIB_ERRNO_MAX ) == 0 );
     TESTCASE( strcmp( s, "unknown e..." ) == 0 );
-    */
 #endif
     return TEST_RESULTS;
 }

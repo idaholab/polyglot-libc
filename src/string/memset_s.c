@@ -1,47 +1,73 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* memset_s( void *, rsize_t, int, rsize_t )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #define __STDC_WANT_LIB_EXT1__ 1
-
 #include <string.h>
-#include <stdio.h>
-#include <errno.h>
-#include <param.h>
 #include <stdint.h>
+#include <stdlib.h>
 
+#ifndef REGTEST
 
-errno_t memset_s(void *s, rsize_t smax, int c, rsize_t n)
+errno_t memset_s( void * s, rsize_t smax, int c, rsize_t n )
 {
-    if (s == NULL)
-        return EINVAL;
-    if (smax > RSIZE_MAX)
-        return E2BIG;
+    unsigned char * p = ( unsigned char * ) s;
 
-    for (rsize_t i = 0; i < MIN(rsize_t, smax, n); ++i) {
-        ((unsigned char *)s)[i] = (unsigned char)c;
+    if ( s == NULL || smax > RSIZE_MAX || n > RSIZE_MAX || n > smax )
+    {
+        if ( s != NULL && smax <= RSIZE_MAX )
+        {
+            memset( s, c, smax );
+        }
+
+        _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
+        return _PDCLIB_EINVAL;
     }
 
-    if (n > RSIZE_MAX)
-        return E2BIG;
-    if (n > smax)
-        return EOVERFLOW;
+    while ( n-- )
+    {
+        *p++ = ( unsigned char ) c;
+    }
 
     return 0;
 }
 
+#endif
 
+#ifdef TEST
+
+#include "_PDCLIB_test.h"
+
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
+
+static int HANDLER_CALLS = 0;
+
+static void test_handler( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error )
+{
+    ++HANDLER_CALLS;
+}
+
+#endif
+
+int main( void )
+{
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
+    char s[] = "xxxxxxxxx";
+    set_constraint_handler_s( test_handler );
+
+    TESTCASE( memset_s( s, 10, 'o', 10 ) == 0 );
+    TESTCASE( s[9] == 'o' );
+    TESTCASE( memset_s( s, 10, '_', ( 0 ) ) == 0 );
+    TESTCASE( s[0] == 'o' );
+    TESTCASE( memset_s( s, 10, '_', 1 ) == 0 );
+    TESTCASE( s[0] == '_' );
+    TESTCASE( s[1] == 'o' );
+
+    TESTCASE( HANDLER_CALLS == 0 );
+#endif
+    return TEST_RESULTS;
+}
+
+#endif

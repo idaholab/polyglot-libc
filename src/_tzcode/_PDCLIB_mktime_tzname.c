@@ -1,23 +1,7 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* _PDCLIB_mktime_tzname( struct state *, struct tm *, bool )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/*
-_PDCLIB_mktime_tzname( struct state *, struct tm *, bool )
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #ifndef REGTEST
@@ -346,19 +330,19 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
 
         for ( i = sp->typecnt - 1; i >= 0; --i )
         {
-            if ( sp->ttis[ i ].tt_isdst != yourtm.tm_isdst )
+            if ( sp->ttis[ i ].isdst != yourtm.tm_isdst )
             {
                 continue;
             }
 
             for ( j = sp->typecnt - 1; j >= 0; --j )
             {
-                if ( sp->ttis[ j ].tt_isdst == yourtm.tm_isdst )
+                if ( sp->ttis[ j ].isdst == yourtm.tm_isdst )
                 {
                     continue;
                 }
 
-                newt = ( t + sp->ttis[ j ].tt_utoff - sp->ttis[ i ].tt_utoff );
+                newt = ( t + sp->ttis[ j ].utoff - sp->ttis[ i ].utoff );
 
                 if ( ! funcp( sp, &newt, offset, &mytm ) )
                 {
@@ -483,7 +467,7 @@ static time_t time1( struct tm * tmp, struct tm *(*funcp)( struct state const *,
     {
         samei = types[ sameind ];
 
-        if ( sp->ttis[ samei ].tt_isdst != tmp->tm_isdst )
+        if ( sp->ttis[ samei ].isdst != tmp->tm_isdst )
         {
             continue;
         }
@@ -492,12 +476,12 @@ static time_t time1( struct tm * tmp, struct tm *(*funcp)( struct state const *,
         {
             otheri = types[ otherind ];
 
-            if ( sp->ttis[ otheri ].tt_isdst == tmp->tm_isdst )
+            if ( sp->ttis[ otheri ].isdst == tmp->tm_isdst )
             {
                 continue;
             }
 
-            tmp->tm_sec += ( sp->ttis[ otheri ].tt_utoff - sp->ttis[ samei ].tt_utoff );
+            tmp->tm_sec += ( sp->ttis[ otheri ].utoff - sp->ttis[ samei ].utoff );
             tmp->tm_isdst = ! tmp->tm_isdst;
             t = time2( tmp, funcp, sp, offset, &okay );
 
@@ -506,7 +490,7 @@ static time_t time1( struct tm * tmp, struct tm *(*funcp)( struct state const *,
                 return t;
             }
 
-            tmp->tm_sec -= ( sp->ttis[ otheri ].tt_utoff - sp->ttis[ samei ].tt_utoff );
+            tmp->tm_sec -= ( sp->ttis[ otheri ].utoff - sp->ttis[ samei ].utoff );
             tmp->tm_isdst = ! tmp->tm_isdst;
         }
     }
@@ -523,7 +507,7 @@ time_t _PDCLIB_mktime_tzname( struct state * sp, struct tm * tmp, bool setname )
     else
     {
         _PDCLIB_gmtcheck();
-        return time1( tmp, _PDCLIB_gmtsub, _PDCLIB_gmtptr, 0 );
+        return time1( tmp, _PDCLIB_gmtsub, &_PDCLIB_gmtmem, 0 );
     }
 }
 

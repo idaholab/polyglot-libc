@@ -1,23 +1,7 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* stdarg
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/*
-stdarg
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #include <stdarg.h>
@@ -30,80 +14,76 @@ stdarg
 
 typedef int ( *intfunc_t )( void );
 
-enum tag_t
-{
-    TAG_END,
-    TAG_INT,
-    TAG_LONG,
-    TAG_LLONG,
-    TAG_DBL,
-    TAG_LDBL,
-    TAG_INTPTR,
-    TAG_LDBLPTR,
-    TAG_FUNCPTR
-};
+#define TAG_END     0
+#define TAG_INT     1
+#define TAG_LONG    2
+#define TAG_LLONG   3
+#define TAG_DBL     4
+#define TAG_LDBL    5
+#define TAG_INTPTR  6
+#define TAG_LDBLPTR 7
+#define TAG_FUNCPTR 8
 
 static int dummy( void )
 {
     return INT_MAX;
 }
 
-static int test( enum tag_t s, ... )
+static int test( int s, ... )
 {
-    enum tag_t tag = s;
     va_list ap;
     va_start( ap, s );
 
     for ( ;; )
     {
-        switch ( tag )
+        switch ( s )
         {
             case TAG_INT:
             {
                 TESTCASE( va_arg( ap, int ) == INT_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_LONG:
             {
                 TESTCASE( va_arg( ap, long ) == LONG_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_LLONG:
             {
                 TESTCASE( va_arg( ap, long long ) == LLONG_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_DBL:
             {
                 TESTCASE( va_arg( ap, double ) == DBL_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_LDBL:
             {
                 TESTCASE( va_arg( ap, long double ) == LDBL_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_INTPTR:
             {
                 TESTCASE( *( va_arg( ap, int * ) ) == INT_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
             case TAG_LDBLPTR:
             {
                 TESTCASE( *( va_arg( ap, long double * ) ) == LDBL_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 
@@ -112,7 +92,7 @@ static int test( enum tag_t s, ... )
                 intfunc_t function;
                 TESTCASE( ( function = va_arg( ap, intfunc_t ) ) == dummy );
                 TESTCASE( function() == INT_MAX );
-                tag = va_arg( ap, enum tag_t );
+                s = va_arg( ap, int );
                 break;
             }
 

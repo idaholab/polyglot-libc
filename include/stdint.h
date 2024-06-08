@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* Integer types <stdint.h>
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* Integer types <stdint.h> */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #ifndef _PDCLIB_STDINT_H
 #define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
@@ -26,32 +12,28 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 /* 7.18.1.1 Exact-width integer types. */
 
-#if _PDCLIB_TWOS_COMPLEMENT == 1
-
-#if _PDCLIB_INT_LEAST8_MAX == 0x7f
-typedef _PDCLIB_int_least8_t  int8_t;
-typedef _PDCLIB_uint_least8_t  uint8_t;
+#ifdef _PDCLIB_int8_t
+typedef _PDCLIB_int8_t int8_t;
+typedef _PDCLIB_uint8_t uint8_t;
 #endif
 
-#if _PDCLIB_INT_LEAST16_MAX == 0x7fff
-typedef _PDCLIB_int_least16_t int16_t;
-typedef _PDCLIB_uint_least16_t uint16_t;
+#ifdef _PDCLIB_int16_t
+typedef _PDCLIB_int16_t int16_t;
+typedef _PDCLIB_uint16_t uint16_t;
 #endif
 
-#if _PDCLIB_INT_LEAST32_MAX == 0x7fffffffl
-typedef _PDCLIB_int_least32_t int32_t;
-typedef _PDCLIB_uint_least32_t uint32_t;
+#ifdef _PDCLIB_int32_t
+typedef _PDCLIB_int32_t int32_t;
+typedef _PDCLIB_uint32_t uint32_t;
 #endif
 
-#if _PDCLIB_INT_LEAST64_MAX == 0x7fffffffffffffffll
-typedef _PDCLIB_int_least64_t int64_t;
-typedef _PDCLIB_uint_least64_t uint64_t;
-#endif
-
+#ifdef _PDCLIB_int64_t
+typedef _PDCLIB_int64_t int64_t;
+typedef _PDCLIB_uint64_t uint64_t;
 #endif
 
 /* 7.18.1.2 Minimum-width integer types */
@@ -210,14 +192,6 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.4.1 Macros for minimum-width integer constants */
 
-/* As the minimum-width types - for the required widths of 8, 16, 32, and 64
-   bits - are expressed in terms of the exact-width types, the mechanism for
-   these macros is to append the literal of that exact-width type to the macro
-   parameter.
-   This is considered a hack, as the author is not sure his understanding of
-   the requirements of this macro is correct. Any input appreciated.
-*/
-
 /* Expand to an integer constant of specified value and type int_leastN_t */
 
 #define INT8_C  _PDCLIB_INT_LEAST8_C
@@ -227,10 +201,10 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-#define UINT8_C  _PDCLIB_INT_LEAST8_C
-#define UINT16_C _PDCLIB_INT_LEAST16_C
-#define UINT32_C _PDCLIB_INT_LEAST32_C
-#define UINT64_C _PDCLIB_INT_LEAST64_C
+#define UINT8_C  _PDCLIB_UINT_LEAST8_C
+#define UINT16_C _PDCLIB_UINT_LEAST16_C
+#define UINT32_C _PDCLIB_UINT_LEAST32_C
+#define UINT64_C _PDCLIB_UINT_LEAST64_C
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 

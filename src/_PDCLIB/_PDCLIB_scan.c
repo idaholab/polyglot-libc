@@ -1,23 +1,7 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* _PDCLIB_scan( const char *, struct _PDCLIB_status_t * )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/*
-_PDCLIB_scan( const char *, struct _PDCLIB_status_t * )
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #include <stdio.h>
@@ -30,6 +14,8 @@ _PDCLIB_scan( const char *, struct _PDCLIB_status_t * )
 #include <limits.h>
 
 #ifndef REGTEST
+
+#include "pdclib/_PDCLIB_glue.h"
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -58,7 +44,10 @@ static int GET( struct _PDCLIB_status_t * status )
 
     if ( status->stream != NULL )
     {
-        rc = getc( status->stream );
+        if ( _PDCLIB_CHECKBUFFER( status->stream ) != EOF )
+        {
+            rc = _PDCLIB_GETC( status->stream );
+        }
     }
     else
     {
@@ -360,7 +349,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
-                if ( isspace( rc ) )
+                if ( isspace( (unsigned char)rc ) )
                 {
                     UNGET( rc, status );
 
@@ -523,7 +512,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         while ( ( status->current < status->width ) &&
                 ( ( rc = GET( status ) ) != EOF ) )
         {
-            if ( isspace( rc ) )
+            if ( isspace( (unsigned char)rc ) )
             {
                 if ( sign )
                 {
@@ -583,7 +572,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                             if ( ( status->current < status->width ) &&
                                  ( ( rc = GET( status ) ) != EOF ) )
                             {
-                                if ( tolower( rc ) == 'x' )
+                                if ( tolower( (unsigned char)rc ) == 'x' )
                                 {
                                     /* 0x... would be prefix for hex base... */
                                     if ( ( status->base == 0 ) ||
@@ -622,7 +611,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     }
                     else
                     {
-                        char * digitptr = (char *)memchr( _PDCLIB_digits, tolower( rc ), status->base );
+                        char * digitptr = (char *)memchr( _PDCLIB_digits, tolower( (unsigned char)rc ), status->base );
 
                         if ( digitptr == NULL )
                         {
@@ -750,6 +739,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 static int testscanf( const char * s, const char * format, ... )
 {
     struct _PDCLIB_status_t status;
+    char const * rc;
 
     status.n = 0;
     status.i = 0;
@@ -757,9 +747,17 @@ static int testscanf( const char * s, const char * format, ... )
     status.stream = NULL;
     va_start( status.arg, format );
 
-    if ( *( _PDCLIB_scan( format, &status ) ) != '\0' )
+    rc = _PDCLIB_scan( format, &status );
+
+    if ( rc != NULL && rc[0] != '\0' )
     {
         printf( "_PDCLIB_scan() did not return end-of-specifier on '%s'.\n", format );
+        ++TEST_RESULTS;
+    }
+
+    if ( rc == NULL && s[0] != '\0' )
+    {
+        printf( "_PDCLIB_scan() returned NULL on '%s' input.", s );
         ++TEST_RESULTS;
     }
 

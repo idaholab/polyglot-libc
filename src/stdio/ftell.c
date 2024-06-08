@@ -1,25 +1,10 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* ftell( FILE * )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* ftell( FILE * ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #include <stdio.h>
-#include <sys/types.h>
 #include <limits.h>
 
 #ifndef REGTEST
@@ -51,7 +36,6 @@ long int ftell( struct _PDCLIB_file_t * stream )
     long int rc;
     _PDCLIB_LOCK( stream->mtx );
 
-    /* TODO: Check what happens when ungetc() is called on a stream at offset 0 */
     if ( ( stream->pos.offset - stream->bufend ) > ( LONG_MAX - ( stream->bufidx - stream->ungetidx ) ) )
     {
         /* integer overflow */
@@ -63,11 +47,6 @@ long int ftell( struct _PDCLIB_file_t * stream )
     rc = ( stream->pos.offset - ( ( ( int )stream->bufend - ( int )stream->bufidx ) + stream->ungetidx ) );
     _PDCLIB_UNLOCK( stream->mtx );
     return rc;
-}
-
-off_t ftello(struct _PDCLIB_file_t *stream)
-{
-    return (off_t)ftell(stream);
 }
 
 #endif
@@ -88,7 +67,7 @@ int main( void )
        fgetc fflush rewind fputc ungetc fseek
        flushbuffer seek fillbuffer prepread prepwrite
     */
-    char * buffer = ( char * )malloc( 4 );
+    char buffer[4];
     FILE * fh;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );

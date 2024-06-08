@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* rename( const char *, const char * )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* rename( const char *, const char * ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #include <stdio.h>
 
@@ -64,6 +50,7 @@ int rename( const char * oldpath, const char * newpath )
 #include "_PDCLIB_test.h"
 
 #include <stdlib.h>
+#include <errno.h>
 
 int main( void )
 {
@@ -98,8 +85,12 @@ int main( void )
     /* rename file 1 to file 2 - expected to fail, see comment in
        _PDCLIB_rename() itself.
     */
-    /* NOREG as glibc overwrites existing destination file. */
-    TESTCASE_NOREG( rename( testfile1, testfile2 ) == -1 );
+    /* Whether existing destination files are overwritten or not
+       is implementation-defined.
+       See functions/_PDCLIB/_PDCLIB_rename.c for your platform
+       for details.
+    */
+    /*TESTCASE( rename( testfile1, testfile2 ) == [0|1] );*/
     /* remove both files */
     TESTCASE( remove( testfile1 ) == 0 );
     TESTCASE( remove( testfile2 ) == 0 );

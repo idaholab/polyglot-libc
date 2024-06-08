@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* fread( void *, size_t, size_t, struct * )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* fwrite( void *, size_t, size_t, FILE * ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -32,33 +18,30 @@
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     char * dest = ( char * )ptr;
-    size_t nmemb_i;
+    size_t nmemb_i = 0;
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) != EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
-        return 0;
-    }
-
-    for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
-    {
-        size_t size_i;
-
-        for ( size_i = 0; size_i < size; ++size_i )
+        for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
         {
-            if ( stream->bufidx == stream->bufend )
+            size_t size_i;
+
+            /* TODO: For better performance, move from stream buffer
+               to destination block-wise, not byte-wise.
+            */
+            for ( size_i = 0; size_i < size; ++size_i )
             {
-                if ( _PDCLIB_fillbuffer( stream ) == EOF )
+                if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
                 {
                     /* Could not read requested data */
                     _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i;
                 }
-            }
 
-            dest[ nmemb_i * size + size_i ] = stream->buffer[ stream->bufidx++ ];
+                dest[ nmemb_i * size + size_i ] = _PDCLIB_GETC( stream );
+            }
         }
     }
 

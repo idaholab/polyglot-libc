@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* strtoull( const char *, char **, int )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* strtoull( const char *, char **, int ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #include <limits.h>
 #include <stdlib.h>
@@ -76,7 +62,8 @@ int main( void )
     TESTCASE( strtoull( "0Xa1", NULL, 0 ) == 161 );
     /* proper handling of border case: 0x followed by non-hexdigit */
     TESTCASE( strtoull( tricky, &endptr, 0 ) == 0 );
-    TESTCASE( endptr == tricky + 2 );
+    /* newlib completely balks at this parse, so we _NOREG it */
+    TESTCASE_NOREG( endptr == tricky + 2 );
     /* proper handling of border case: 0 followed by non-octdigit */
     TESTCASE( strtoull( tricky, &endptr, 8 ) == 0 );
     TESTCASE( endptr == tricky + 2 );
@@ -123,6 +110,9 @@ int main( void )
 #else
 #error Unsupported width of 'long long' (neither 64 nor 128 bit).
 #endif
+    errno = 0;
+    TESTCASE( strtoull( "-1", NULL, 0 ) == ULLONG_MAX );
+    TESTCASE( errno == 0 );
     return TEST_RESULTS;
 }
 

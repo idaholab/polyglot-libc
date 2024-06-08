@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* qsort( void *, size_t, size_t, int(*)( const void *, const void * ) )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* qsort( void *, size_t, size_t, int(*)( const void *, const void * ) ) */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #include <stdlib.h>
 
@@ -190,6 +176,8 @@ int main( void )
     TESTCASE( strcmp( s, presort ) == 0 );
 #if defined( REGTEST ) && ( defined( __BSD_VISIBLE ) || defined( __APPLE__ ) )
     puts( "qsort.c: Skipping test #4 for BSD as it goes into endless loop here." );
+#elif defined( REGTEST ) && defined( __ANDROID__ )
+    puts( "qsort.c: Skipping test #4 for Android as it crashes." );
 #else
     qsort( s, 100, 0, compare );
     TESTCASE( strcmp( s, presort ) == 0 );

@@ -1,23 +1,7 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* _PDCLIB_strtox_prelim( const char *, char *, int * )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/*
-_PDCLIB_strtox_prelim( const char *, char *, int * )
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #include <ctype.h>
@@ -29,7 +13,7 @@ _PDCLIB_strtox_prelim( const char *, char *, int * )
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
 {
     /* skipping leading whitespace */
-    while ( isspace( *p ) )
+    while ( isspace( (unsigned char)*p ) )
     {
         ++p;
     }
@@ -59,7 +43,7 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
                We have to "rewind" the parsing; having the base set to 16 if it
                was zero previously does not hurt, as the result is zero anyway.
             */
-            if ( memchr( _PDCLIB_digits, tolower( *p ), *base ) == NULL )
+            if ( memchr( _PDCLIB_digits, tolower( (unsigned char)*p ), *base ) == NULL )
             {
                 p -= 2;
             }

@@ -1,23 +1,7 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* _PDCLIB_strtox_main( const char **, int, _PDCLIB_uintmax_t, _PDCLIB_uintmax_t, int )
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/*
-_PDCLIB_strtox_main( const char **, int, _PDCLIB_uintmax_t, _PDCLIB_uintmax_t, int )
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #include <ctype.h>
@@ -33,7 +17,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
     int digit = -1;
     const char * x;
 
-    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( **p ), base ) ) != NULL )
+    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( (unsigned char)**p ), base ) ) != NULL )
     {
         digit = x - _PDCLIB_digits;
 
@@ -48,7 +32,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 
             /* TODO: Only if endptr != NULL - but do we really want *another* parameter? */
             /* TODO: Earlier version was missing tolower() here but was not caught by tests */
-            while ( memchr( _PDCLIB_digits, tolower( **p ), base ) != NULL )
+            while ( memchr( _PDCLIB_digits, tolower( (unsigned char)**p ), base ) != NULL )
             {
                 ++( *p );
             }

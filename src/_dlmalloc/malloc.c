@@ -1,26 +1,11 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
-
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
 /* malloc( size_t )
    calloc( size_t, size_t )
    realloc( void *, size_t )
    aligned_alloc( size_t, size_t )
    free( void * )
+
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
 
    It is a slightly modified copy of Doug Lea's malloc(), retrieved from
            ftp://gee.cs.oswego.edu/pub/misc/malloc.c
@@ -28,19 +13,19 @@
 */
 
 /* Declared implicitly by dlmalloc. This declaration avoids the warning. */
-#include <sys/types.h>
-//void * sbrk( intptr_t );
-void * sbrk( size_t );
+#include <stdint.h>
+void * sbrk( /*intptr_t*/ );
 
 #ifndef REGTEST
 
-#include <pdclib/_PDCLIB_config.h>
+#include "pdclib/_PDCLIB_config.h"
+#include "pdclib/_PDCLIB_defguard.h"
 
 /* Have all functions herein use the dl* prefix */
 #define USE_DL_PREFIX 1
 
 /* Thread safety */
-#define USE_LOCKS 0
+#define USE_LOCKS 1
 
 /* Hide all functions herein as internal to the library */
 #define DLMALLOC_EXPORT _PDCLIB_LOCAL
@@ -605,6 +590,24 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #define DLMALLOC_EXPORT extern
 #endif
 
+#if __polyglot
+#define HAVE_MMAP 1
+#define HAVE_MORECORE 1
+//#define LACKS_UNISTD_H
+//#define LACKS_SYS_PARAM_H
+//#define LACKS_SYS_MMAN_H
+//#define LACKS_STRING_H
+//#define LACKS_STRINGS_H
+//#define LACKS_SYS_TYPES_H
+//#define LACKS_ERRNO_H
+// XXX: poyglot has a <sched.h> but it's not really implemented
+#define LACKS_SCHED_H
+#define USE_LOCKS 0
+#define USE_SPIN_LOCKS 0
+#define USE_RECURSIVE_LOCKS 0
+
+#else /* __polyglot */
+// if we're not in polyglot, use the original logic
 #ifndef WIN32
 #ifdef _WIN32
 #define WIN32 1
@@ -651,6 +654,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #endif
 #endif  /* HAVE_MORECORE */
 #endif  /* DARWIN */
+#endif  /* __polyglot */
 
 #ifndef LACKS_SYS_TYPES_H
 #include <sys/types.h>  /* For size_t */
@@ -1338,8 +1342,8 @@ DLMALLOC_EXPORT void  dlmalloc_stats(void);
 
   p = malloc(n);
   assert(malloc_usable_size(p) >= 256);
-*/
 size_t dlmalloc_usable_size(void*);
+*/
 
 #endif /* ONLY_MSPACES */
 
@@ -1626,15 +1630,6 @@ unsigned char _BitScanReverse(unsigned long *index, unsigned long mask);
 #pragma intrinsic(_BitScanReverse)
 #endif /* BitScanForward */
 #endif /* defined(_MSC_VER) && _MSC_VER>=1300 */
-
-// FIXME: fix this! linux doesn't define sysconf() right now, so we need to
-// clobber these to make it use getpagesize() instead...
-#ifdef _SC_PAGESIZE
-#undef _SC_PAGESIZE
-#endif
-#ifdef _SC_PAGE_SIZE
-#undef _SC_PAGE_SIZE
-#endif
 
 #ifndef WIN32
 #ifndef malloc_getpagesize
@@ -5467,6 +5462,7 @@ int dlmallopt(int param_number, int value) {
   return change_mparam(param_number, value);
 }
 
+/*
 size_t dlmalloc_usable_size(void* mem) {
   if (mem != 0) {
     mchunkptr p = mem2chunk(mem);
@@ -5475,6 +5471,7 @@ size_t dlmalloc_usable_size(void* mem) {
   }
   return 0;
 }
+*/
 
 #endif /* !ONLY_MSPACES */
 

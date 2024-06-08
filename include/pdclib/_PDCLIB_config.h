@@ -21,14 +21,16 @@
 #ifndef _PDCLIB_CONFIG_H
 #define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 
-// XXX: we removed _PDCLIB_ERRNO_MAX, which was the only thing in this header;
-// once all that is resolved, we'll remove this message and the commented out
-// include on the next line
-// #include <target/_PDCLIB.h>
-
 /* -------------------------------------------------------------------------- */
 /* Misc                                                                       */
 /* -------------------------------------------------------------------------- */
+
+/* Helper macros also documented in _PDCLIB_internal.h, but defined here as   */
+/* they are needed in this file already.                                      */
+/* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending. */
+/* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
+#define _PDCLIB_cc( x, y )     x ## y
+#define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 /* The character (sequence) your platform uses as newline.                    */
 #define _PDCLIB_endl "\n"
@@ -61,13 +63,13 @@
 /* Symbol Visibility                                                          */
 /* -------------------------------------------------------------------------- */
 
-//#ifdef _PDCLIB_STATIC_DEFINE
+#ifdef _PDCLIB_STATIC_DEFINE
   #define _PDCLIB_PUBLIC
   #define _PDCLIB_LOCAL
-//#else
-  //#define _PDCLIB_PUBLIC __attribute__((visibility ("default")))
-  //#define _PDCLIB_LOCAL  __attribute__((visibility ("hidden")))
-//#endif
+#else
+  #define _PDCLIB_PUBLIC __attribute__((visibility ("default")))
+  #define _PDCLIB_LOCAL  __attribute__((visibility ("hidden")))
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
@@ -140,64 +142,101 @@
 /* and mostly redundant defines, so these are determined in <_PDCLIB_int.h>.  */
 /* -------------------------------------------------------------------------- */
 
+/* int_fast8_t / uint_fast8_t                                                 */
 #define _PDCLIB_int_fast8_t        __INT_FAST8_TYPE__
 #define _PDCLIB_INT_FAST8_MAX      __INT_FAST8_MAX__
 #define _PDCLIB_INT_FAST8_MIN      _PDCLIB_MIN_CALC( __INT_FAST8_MAX__ )
 #define _PDCLIB_uint_fast8_t       __UINT_FAST8_TYPE__
 #define _PDCLIB_UINT_FAST8_MAX     __UINT_FAST8_MAX__
 
+/* int_least8_t / uint_least8_t                                               */
 #define _PDCLIB_int_least8_t       __INT_LEAST8_TYPE__
 #define _PDCLIB_INT_LEAST8_MAX     __INT_LEAST8_MAX__
 #define _PDCLIB_INT_LEAST8_MIN     _PDCLIB_MIN_CALC( __INT_LEAST8_MAX__ )
-#define _PDCLIB_INT_LEAST8_C       __INT8_C
 #define _PDCLIB_uint_least8_t      __UINT_LEAST8_TYPE__
 #define _PDCLIB_UINT_LEAST8_MAX    __UINT_LEAST8_MAX__
-#define _PDCLIB_UINT_LEAST8_C      __UINT8_C
 
+/* int_fast16_t / uint_fast16_t                                               */
 #define _PDCLIB_int_fast16_t       __INT_FAST16_TYPE__
 #define _PDCLIB_INT_FAST16_MAX     __INT_FAST16_MAX__
 #define _PDCLIB_INT_FAST16_MIN     _PDCLIB_MIN_CALC( __INT_FAST16_MAX__ )
 #define _PDCLIB_uint_fast16_t      __UINT_FAST16_TYPE__
 #define _PDCLIB_UINT_FAST16_MAX    __UINT_FAST16_MAX__
 
+/* int_least16_t / uint_least16_t                                             */
 #define _PDCLIB_int_least16_t      __INT_LEAST16_TYPE__
 #define _PDCLIB_INT_LEAST16_MAX    __INT_LEAST16_MAX__
 #define _PDCLIB_INT_LEAST16_MIN    _PDCLIB_MIN_CALC( __INT_LEAST16_MAX__ )
-#define _PDCLIB_INT_LEAST16_C      __INT16_C
 #define _PDCLIB_uint_least16_t     __UINT_LEAST16_TYPE__
 #define _PDCLIB_UINT_LEAST16_MAX   __UINT_LEAST16_MAX__
-#define _PDCLIB_UINT_LEAST16_C     __UINT16_C
 
+/* int_fast32_t / uint_fast32_t                                               */
 #define _PDCLIB_int_fast32_t       __INT_FAST32_TYPE__
 #define _PDCLIB_INT_FAST32_MAX     __INT_FAST32_MAX__
 #define _PDCLIB_INT_FAST32_MIN     _PDCLIB_MIN_CALC( __INT_FAST32_MAX__ )
 #define _PDCLIB_uint_fast32_t      __UINT_FAST32_TYPE__
 #define _PDCLIB_UINT_FAST32_MAX    __UINT_FAST32_MAX__
 
+/* int_least32_t / uint_least32_t                                             */
 #define _PDCLIB_int_least32_t      __INT_LEAST32_TYPE__
 #define _PDCLIB_INT_LEAST32_MAX    __INT_LEAST32_MAX__
 #define _PDCLIB_INT_LEAST32_MIN    _PDCLIB_MIN_CALC( __INT_LEAST32_MAX__ )
-#define _PDCLIB_INT_LEAST32_C      __INT32_C
 #define _PDCLIB_uint_least32_t     __UINT_LEAST32_TYPE__
 #define _PDCLIB_UINT_LEAST32_MAX   __UINT_LEAST32_MAX__
-#define _PDCLIB_UINT_LEAST32_C     __UINT32_C
 
+/* int_fast64_t / uint_fast64_t                                               */
 #define _PDCLIB_int_fast64_t       __INT_FAST64_TYPE__
 #define _PDCLIB_INT_FAST64_MAX     __INT_FAST64_MAX__
 #define _PDCLIB_INT_FAST64_MIN     _PDCLIB_MIN_CALC( __INT_FAST64_MAX__ )
 #define _PDCLIB_uint_fast64_t      __UINT_FAST64_TYPE__
 #define _PDCLIB_UINT_FAST64_MAX    __UINT_FAST64_MAX__
 
+/* int_least64_t / uint_least64_t                                             */
 #define _PDCLIB_int_least64_t      __INT_LEAST64_TYPE__
 #define _PDCLIB_INT_LEAST64_MAX    __INT_LEAST64_MAX__
 #define _PDCLIB_INT_LEAST64_MIN    _PDCLIB_MIN_CALC( __INT_LEAST64_MAX__ )
-#define _PDCLIB_INT_LEAST64_C      __INT64_C
 #define _PDCLIB_uint_least64_t     __UINT_LEAST64_TYPE__
 #define _PDCLIB_UINT_LEAST64_MAX   __UINT_LEAST64_MAX__
-#define _PDCLIB_UINT_LEAST64_C     __UINT64_C
 
-#if __target_arch_mips && (__target_abi_o32 || __target_abi_n32)
-// fix the mips-o32/-n32 uint_least32_t definition (broken PRIx32)
+/* Exact-width integer types. These are *optional*. If your platform does not */
+/* support types of these exact widths in two's complement encoding, just     */
+/* leave them undefined.                                                      */
+#define _PDCLIB_int8_t   __INT8_TYPE__
+#define _PDCLIB_int16_t  __INT16_TYPE__
+#define _PDCLIB_int32_t  __INT32_TYPE__
+#define _PDCLIB_int64_t  __INT64_TYPE__
+#define _PDCLIB_uint8_t  __UINT8_TYPE__
+#define _PDCLIB_uint16_t __UINT16_TYPE__
+#define _PDCLIB_uint32_t __UINT32_TYPE__
+#define _PDCLIB_uint64_t __UINT64_TYPE__
+
+/* INTn_C / UINTn_C macros to define int_leastN_t / uint_leastN_t literals.   */
+#if defined( __INT8_C )
+/* GCC                                                                        */
+#define _PDCLIB_INT_LEAST8_C       __INT8_C
+#define _PDCLIB_UINT_LEAST8_C      __UINT8_C
+#define _PDCLIB_INT_LEAST16_C      __INT16_C
+#define _PDCLIB_UINT_LEAST16_C     __UINT16_C
+#define _PDCLIB_INT_LEAST32_C      __INT32_C
+#define _PDCLIB_UINT_LEAST32_C     __UINT32_C
+#define _PDCLIB_INT_LEAST64_C      __INT64_C
+#define _PDCLIB_UINT_LEAST64_C     __UINT64_C
+#elif defined( __INT8_C_SUFFIX__ )
+/* Clang                                                                      */
+#define _PDCLIB_INT_LEAST8_C(c)    _PDCLIB_concat( c, __INT8_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST8_C(c)   _PDCLIB_concat( c, __UINT8_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST16_C(c)   _PDCLIB_concat( c, __INT16_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST16_C(c)  _PDCLIB_concat( c, __UINT16_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST32_C(c)   _PDCLIB_concat( c, __INT32_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST32_C(c)  _PDCLIB_concat( c, __UINT32_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST64_C(c)   _PDCLIB_concat( c, __INT64_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST64_C(c)  _PDCLIB_concat( c, __UINT64_C_SUFFIX__ )
+#else
+#error Unsupported *INTn_C macros.
+#endif
+
+#if __target_arch_mips && __target_abi_o32
+// fix the mips-o32 uint_least32_t definition (broken PRIx32)
 #undef _PDCLIB_uint_least32_t
 #define _PDCLIB_uint_least32_t unsigned int
 #endif
@@ -329,9 +368,12 @@ struct _PDCLIB_imaxdiv_t
 /* IMPORTANT: *Must* end with separator character!                            */
 /* It does make it much easier for the time data handling code if this detail */
 /* can be relied upon and need not be handled in code.                        */
+/* FIXME: this could be revisited, since it's unlikely that this is going to be
+ * the right format on some random host... */
 #define _PDCLIB_TZDIR "/usr/share/zoneinfo/"
 
 /* Path to default (local) timezone                                           */
+// FIXME: see other notes about paths
 #define _PDCLIB_TZDEFAULT "/etc/localtime"
 
 /* -------------------------------------------------------------------------- */
@@ -343,20 +385,121 @@ struct _PDCLIB_imaxdiv_t
 /* indeterminable rounding, any other value implementation-specific rounding. */
 #define _PDCLIB_FLT_ROUNDS -1
 
-/* Whether the implementation uses exact-width precision (0), promotes float  */
-/* to double (1), or promotes float and double to long double (2).            */
-/* (-1) signifies indeterminable behaviour, any other value implementation-   */
-/* specific behaviour.                                                        */
-#define _PDCLIB_FLT_EVAL_METHOD -1
+/* Check <float.h> for explanations on each of these values.                  */
+#define _PDCLIB_FLT_EVAL_METHOD   __FLT_EVAL_METHOD__
 
-/* "Number of the decimal digits (n), such that any floating-point number in  */
-/* the widest supported floating type with p(max) radix (b) digits can be     */
-/* rounded to a floating-point number with (n) decimal digits and back again  */
-/* without change to the value p(max) log(10)b if (b) is a power of 10,       */
-/* [1 + p(max) log(10)b] otherwise."                                          */
-/* 64bit IEC 60559 double format (53bit mantissa) is DECIMAL_DIG 17.          */
-/* 80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21. */
-#define _PDCLIB_DECIMAL_DIG 17
+#define _PDCLIB_FLT_HAS_SUBNORM   __FLT_HAS_DENORM__
+#define _PDCLIB_DBL_HAS_SUBNORM   __DBL_HAS_DENORM__
+#define _PDCLIB_LDBL_HAS_SUBNORM  __LDBL_HAS_DENORM__
+
+#define _PDCLIB_FLT_RADIX         __FLT_RADIX__
+
+#define _PDCLIB_FLT_MANT_DIG      __FLT_MANT_DIG__
+#define _PDCLIB_DBL_MANT_DIG      __DBL_MANT_DIG__
+#define _PDCLIB_LDBL_MANT_DIG     __LDBL_MANT_DIG__
+
+#define _PDCLIB_FLT_DECIMAL_DIG   __FLT_DECIMAL_DIG__
+#define _PDCLIB_DBL_DECIMAL_DIG   __DBL_DECIMAL_DIG__
+#define _PDCLIB_LDBL_DECIMAL_DIG  __LDBL_DECIMAL_DIG__
+
+#define _PDCLIB_DECIMAL_DIG       __DECIMAL_DIG__
+
+#define _PDCLIB_FLT_DIG           __FLT_DIG__
+#define _PDCLIB_DBL_DIG           __DBL_DIG__
+#define _PDCLIB_LDBL_DIG          __LDBL_DIG__
+
+#define _PDCLIB_FLT_MIN_EXP       __FLT_MIN_EXP__
+#define _PDCLIB_DBL_MIN_EXP       __DBL_MIN_EXP__
+#define _PDCLIB_LDBL_MIN_EXP      __LDBL_MIN_EXP__
+
+#define _PDCLIB_FLT_MIN_10_EXP    __FLT_MIN_10_EXP__
+#define _PDCLIB_DBL_MIN_10_EXP    __DBL_MIN_10_EXP__
+#define _PDCLIB_LDBL_MIN_10_EXP   __LDBL_MIN_10_EXP__
+
+#define _PDCLIB_FLT_MAX_EXP       __FLT_MAX_EXP__
+#define _PDCLIB_DBL_MAX_EXP       __DBL_MAX_EXP__
+#define _PDCLIB_LDBL_MAX_EXP      __LDBL_MAX_EXP__
+
+#define _PDCLIB_FLT_MAX_10_EXP    __FLT_MAX_10_EXP__
+#define _PDCLIB_DBL_MAX_10_EXP    __DBL_MAX_10_EXP__
+#define _PDCLIB_LDBL_MAX_10_EXP   __LDBL_MAX_10_EXP__
+
+#define _PDCLIB_FLT_MAX           __FLT_MAX__
+#define _PDCLIB_DBL_MAX           __DBL_MAX__
+#define _PDCLIB_LDBL_MAX          __LDBL_MAX__
+
+#define _PDCLIB_FLT_EPSILON       __FLT_EPSILON__
+#define _PDCLIB_DBL_EPSILON       __DBL_EPSILON__
+#define _PDCLIB_LDBL_EPSILON      __LDBL_EPSILON__
+
+#define _PDCLIB_FLT_MIN           __FLT_MIN__
+#define _PDCLIB_DBL_MIN           __DBL_MIN__
+#define _PDCLIB_LDBL_MIN          __LDBL_MIN__
+
+#define _PDCLIB_FLT_TRUE_MIN      __FLT_DENORM_MIN__
+#define _PDCLIB_DBL_TRUE_MIN      __DBL_DENORM_MIN__
+#define _PDCLIB_LDBL_TRUE_MIN     __LDBL_DENORM_MIN__
+
+/* Macros for deconstructing floating point values                            */
+#define _PDCLIB_DBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_DBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_DBL_BIAS 1023
+#define _PDCLIB_DBL_MANT_START( bytes ) ( bytes + 6 )
+
+/* Most platforms today use IEEE 754 single precision for 'float', and double */
+/* precision for 'double'. But type 'long double' varies. We use what the     */
+/* compiler states about LDBL_MANT_DIG to determine the type.                 */
+#if _PDCLIB_LDBL_MANT_DIG == 64
+
+/* Intel "Extended Precision" format, using 80 bits (64bit mantissa) */
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[9] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[9] & 0x7f ) << 8 ) | (unsigned)bytes[8] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 7 )
+
+#elif _PDCLIB_LDBL_MANT_DIG == 113
+
+/* IEEE "Quadruple Precision" format, using 128 bits (113bit mantissa) */
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[15] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[15] & 0x7f ) << 8 ) | (unsigned)bytes[14] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 13 )
+
+#else
+
+/* IEEE "Double Precision" format, using 64 bits (53bit mantissa,
+   same as DBL above) */
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_LDBL_BIAS 1023
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 6 )
+
+#endif
+
+/* Given the definitions for *_MANT_START above, which resolve to "pointer
+   to most dignificant byte of mantissa", the operand to use to get at the
+   less significant bytes. (That would be - for i386, x86_64, and ARM.)
+*/
+#define _PDCLIB_FLT_OP -
+
+/* -------------------------------------------------------------------------- */
+/* Big Integer Arithmetic                                                     */
+/* -------------------------------------------------------------------------- */
+/* In support of the floating point converstions required by printf() etc.,   */
+/* PDCLib provides rudimentary big integer arithmetics. The _PDCLIB_bigint_t  */
+/* type stores values in a sequence of integer "digits", which may be of any  */
+/* uint_leastN_t type with N being 32 or 16. Note that multiplication and     */
+/* division require the help of the next larger type. So set the define to    */
+/* 32 if efficient 64bit integer arithmetics are available on your platform,  */
+/* and to 16 otherwise.                                                       */
+/* (The value range of _PDCLIB_bigint_t is not affected by this setting.)     */
+
+#define _PDCLIB_BIGINT_DIGIT_BITS 16
+
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
@@ -448,192 +591,88 @@ typedef int _PDCLIB_fd_t;
 /* By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is       */
 /* capable of "translating" between errno values used by the hosting OS and   */
 /* those used and passed out by the library.                                  */
-/*                                                                            */
-/* Example: In the example platform, the remove() function uses the unlink()  */
-/* system call as backend. Linux sets its errno to EISDIR if you try to       */
-/* unlink() a directory, but POSIX demands EPERM. Within the remove()         */
-/* function, you can catch 'errno == EISDIR', and set '*_PDCLIB_errno_func()  */
-/* = _PDCLIB_EPERM'. Anyone using PDCLib's <errno.h> will "see" EPERM instead */
-/* of EISDIR.                                                                 */
-/*                                                                            */
-/* If you do not want that kind of translation, you might want to "match" the */
-/* values used by PDCLib with those used by the host OS, to avoid confusion.  */
-/* auxiliary/errno/errno_readout.c provides a convenience program to read     */
-/* those errno values mandated by the standard from a platform's <errno.h>,   */
-/* giving output that can readily be pasted here.                             */
-/* Either way, note that the list below, the list in PDCLib's <errno.h>, and  */
-/* the list in _PDCLIB_stdinit.h, need to be kept in sync.                    */
-/*                                                                            */
-/* The values below are read from a Linux system.                             */
+/* FIXME: this should just be removed and we should use the real names in all of
+ * PDClib where we need them... fix that. */
 
 #include <target/errno.h>
-
-// FIXME: this should just be removed and we should use the real names in all of
-// PDClib where we need them... fix that.
-
-/* Argument list too long */
-#define _PDCLIB_E2BIG           E2BIG
-/* Permission denied */
-#define _PDCLIB_EACCES          EACCES
-/* Address in use */
-#define _PDCLIB_EADDRINUSE      EADDRINUSE
-/* Address not available */
-#define _PDCLIB_EADDRNOTAVAIL   EADDRNOTAVAIL
-/* Address family not supported */
-#define _PDCLIB_EAFNOSUPPORT    EAFNOSUPPORT
-/* Resource unavailable, try again */
-#define _PDCLIB_EAGAIN          EAGAIN
-/* Connection already in progress */
-#define _PDCLIB_EALREADY        EALREADY
-/* Bad file descriptor */
-#define _PDCLIB_EBADF           EBADF
-/* Bad message */
-#define _PDCLIB_EBADMSG         EBADMSG
-/* Device or resource busy */
-#define _PDCLIB_EBUSY           EBUSY
-/* Operation canceled */
-#define _PDCLIB_ECANCELED       ECANCELED
-/* No child processes */
-#define _PDCLIB_ECHILD          ECHILD
-/* Connection aborted */
-#define _PDCLIB_ECONNABORTED    ECONNABORTED
-/* Connection refused */
-#define _PDCLIB_ECONNREFUSED    ECONNREFUSED
-/* Connection reset */
-#define _PDCLIB_ECONNRESET      ECONNRESET
-/* Resource deadlock would occur */
-#define _PDCLIB_EDEADLK         EDEADLK
-/* Destination address required */
-#define _PDCLIB_EDESTADDRREQ    EDESTADDRREQ
-/* Mathematics argument out of domain of function */
-#define _PDCLIB_EDOM            EDOM
-/* File exists */
-#define _PDCLIB_EEXIST          EEXIST
-/* Bad address */
-#define _PDCLIB_EFAULT          EFAULT
-/* File too large */
-#define _PDCLIB_EFBIG           EFBIG
-/* Host is unreachable */
-#define _PDCLIB_EHOSTUNREACH    EHOSTUNREACH
-/* Identifier removed */
-#define _PDCLIB_EIDRM           EIDRM
-/* Illegal byte sequence */
-#define _PDCLIB_EILSEQ          EILSEQ
-/* Operation in progress */
-#define _PDCLIB_EINPROGRESS     EINPROGRESS
-/* Interrupted function */
-#define _PDCLIB_EINTR           EINTR
-/* Invalid argument */
-#define _PDCLIB_EINVAL          EINVAL
-/* I/O error */
-#define _PDCLIB_EIO             EIO
-/* Socket is connected */
-#define _PDCLIB_EISCONN         EISCONN
-/* Is a directory */
-#define _PDCLIB_EISDIR          EISDIR
-/* Too many levels of symbolic links */
-#define _PDCLIB_ELOOP           ELOOP
-/* File descriptor value too large */
-#define _PDCLIB_EMFILE          EMFILE
-/* Too many links */
-#define _PDCLIB_EMLINK          EMLINK
-/* Message too large */
-#define _PDCLIB_EMSGSIZE        EMSGSIZE
-/* Filename too long */
-#define _PDCLIB_ENAMETOOLONG    ENAMETOOLONG
-/* Network is down */
-#define _PDCLIB_ENETDOWN        ENETDOWN
-/* Connection aborted by network */
-#define _PDCLIB_ENETRESET       ENETRESET
-/* Network unreachable */
-#define _PDCLIB_ENETUNREACH     ENETUNREACH
-/* Too many files open in system */
-#define _PDCLIB_ENFILE          ENFILE
-/* No buffer space available */
-#define _PDCLIB_ENOBUFS         ENOBUFS
-/* No message is available on the STREAM head read queue */
-#define _PDCLIB_ENODATA         ENODATA
-/* No such device */
-#define _PDCLIB_ENODEV          ENODEV
-/* No such file or directory */
-#define _PDCLIB_ENOENT          ENOENT
-/* Executable file format error */
-#define _PDCLIB_ENOEXEC         ENOEXEC
-/* No locks available */
-#define _PDCLIB_ENOLCK          ENOLCK
-/* Link has been severed */
-#define _PDCLIB_ENOLINK         ENOLINK
-/* Not enough space */
-#define _PDCLIB_ENOMEM          ENOMEM
-/* No message of the desired type */
-#define _PDCLIB_ENOMSG          ENOMSG
-/* Protocol not available */
-#define _PDCLIB_ENOPROTOOPT     ENOPROTOOPT
-/* No space left on device */
-#define _PDCLIB_ENOSPC          ENOSPC
-/* No STREAM resources */
-#define _PDCLIB_ENOSR           ENOSR
-/* Not a STREAM */
-#define _PDCLIB_ENOSTR          ENOSTR
-/* Function not supported */
-#define _PDCLIB_ENOSYS          ENOSYS
-/* The socket is not connected */
-#define _PDCLIB_ENOTCONN        ENOTCONN
-/* Not a directory */
-#define _PDCLIB_ENOTDIR         ENOTDIR
-/* Directory not empty */
-#define _PDCLIB_ENOTEMPTY       ENOTEMPTY
-/* State not recoverable */
-#define _PDCLIB_ENOTRECOVERABLE ENOTRECOVERABLE
-/* Not a socket */
-#define _PDCLIB_ENOTSOCK        ENOTSOCK
-/* Not supported */
-#define _PDCLIB_ENOTSUP         ENOTSUP
-/* Inappropriate I/O control operation */
-#define _PDCLIB_ENOTTY          ENOTTY
-/* No such device or address */
-#define _PDCLIB_ENXIO           ENXIO
-/* Operation not supported on socket */
-#define _PDCLIB_EOPNOTSUPP      EOPNOTSUPP
-/* Value too large to be stored in data type */
-#define _PDCLIB_EOVERFLOW       EOVERFLOW
-/* Previous owner died */
-#define _PDCLIB_EOWNERDEAD      EOWNERDEAD
-/* Operation not permitted */
-#define _PDCLIB_EPERM           EPERM
-/* Broken pipe */
-#define _PDCLIB_EPIPE           EPIPE
-/* Protocol error */
-#define _PDCLIB_EPROTO          EPROTO
-/* Protocol not supported */
-#define _PDCLIB_EPROTONOSUPPORT EPROTONOSUPPORT
-/* Protocol wrong type for socket */
-#define _PDCLIB_EPROTOTYPE      EPROTOTYPE
-/* Result too large */
-#define _PDCLIB_ERANGE          ERANGE
-/* Read-only file system */
-#define _PDCLIB_EROFS           EROFS
-/* Invalid seek */
-#define _PDCLIB_ESPIPE          ESPIPE
-/* No such process */
-#define _PDCLIB_ESRCH           ESRCH
-/* Stream ioctl() timeout */
-#define _PDCLIB_ETIME           ETIME
-/* Connection timed out */
-#define _PDCLIB_ETIMEDOUT       ETIMEDOUT
-/* Text file busy */
-#define _PDCLIB_ETXTBSY         ETXTBSY
-/* Operation would block */
-#define _PDCLIB_EWOULDBLOCK     EWOULDBLOCK
-/* Cross-device link */
-#define _PDCLIB_EXDEV           EXDEV
-
-/* The highest defined errno value, plus one. This is used to set the size    */
-/* of the array in struct _PDCLIB_lc_text_t holding error messages for the    */
-/* strerror() and perror() functions. (If you change this value because you   */
-/* are using additional errno values, you *HAVE* to provide appropriate error */
-/* messages for *ALL* locales.)                                               */
-//#define _PDCLIB_ERRNO_MAX 132
+#define _PDCLIB_E2BIG           E2BIG           /* Argument list too long */
+#define _PDCLIB_EACCES          EACCES          /* Permission denied */
+#define _PDCLIB_EADDRINUSE      EADDRINUSE      /* Address in use */
+#define _PDCLIB_EADDRNOTAVAIL   EADDRNOTAVAIL   /* Address not available */
+#define _PDCLIB_EAFNOSUPPORT    EAFNOSUPPORT    /* Address family not supported */
+#define _PDCLIB_EAGAIN          EAGAIN          /* Resource unavailable, try again */
+#define _PDCLIB_EALREADY        EALREADY        /* Connection already in progress */
+#define _PDCLIB_EBADF           EBADF           /* Bad file descriptor */
+#define _PDCLIB_EBADMSG         EBADMSG         /* Bad message */
+#define _PDCLIB_EBUSY           EBUSY           /* Device or resource busy */
+#define _PDCLIB_ECANCELED       ECANCELED       /* Operation canceled */
+#define _PDCLIB_ECHILD          ECHILD          /* No child processes */
+#define _PDCLIB_ECONNABORTED    ECONNABORTED    /* Connection aborted */
+#define _PDCLIB_ECONNREFUSED    ECONNREFUSED    /* Connection refused */
+#define _PDCLIB_ECONNRESET      ECONNRESET      /* Connection reset */
+#define _PDCLIB_EDEADLK         EDEADLK         /* Resource deadlock would occur */
+#define _PDCLIB_EDESTADDRREQ    EDESTADDRREQ    /* Destination address required */
+#define _PDCLIB_EDOM            EDOM            /* Mathematics argument out of domain of function */
+#define _PDCLIB_EEXIST          EEXIST          /* File exists */
+#define _PDCLIB_EFAULT          EFAULT          /* Bad address */
+#define _PDCLIB_EFBIG           EFBIG           /* File too large */
+#define _PDCLIB_EHOSTUNREACH    EHOSTUNREACH    /* Host is unreachable */
+#define _PDCLIB_EIDRM           EIDRM           /* Identifier removed */
+#define _PDCLIB_EILSEQ          EILSEQ          /* Illegal byte sequence */
+#define _PDCLIB_EINPROGRESS     EINPROGRESS     /* Operation in progress */
+#define _PDCLIB_EINTR           EINTR           /* Interrupted function */
+#define _PDCLIB_EINVAL          EINVAL          /* Invalid argument */
+#define _PDCLIB_EIO             EIO             /* I/O error */
+#define _PDCLIB_EISCONN         EISCONN         /* Socket is connected */
+#define _PDCLIB_EISDIR          EISDIR          /* Is a directory */
+#define _PDCLIB_ELOOP           ELOOP           /* Too many levels of symbolic links */
+#define _PDCLIB_EMFILE          EMFILE          /* File descriptor value too large */
+#define _PDCLIB_EMLINK          EMLINK          /* Too many links */
+#define _PDCLIB_EMSGSIZE        EMSGSIZE        /* Message too large */
+#define _PDCLIB_ENAMETOOLONG    ENAMETOOLONG    /* Filename too long */
+#define _PDCLIB_ENETDOWN        ENETDOWN        /* Network is down */
+#define _PDCLIB_ENETRESET       ENETRESET       /* Connection aborted by network */
+#define _PDCLIB_ENETUNREACH     ENETUNREACH     /* Network unreachable */
+#define _PDCLIB_ENFILE          ENFILE          /* Too many files open in system */
+#define _PDCLIB_ENOBUFS         ENOBUFS         /* No buffer space available */
+#define _PDCLIB_ENODATA         ENODATA         /* No message is available on the STREAM head read queue */
+#define _PDCLIB_ENODEV          ENODEV          /* No such device */
+#define _PDCLIB_ENOENT          ENOENT          /* No such file or directory */
+#define _PDCLIB_ENOEXEC         ENOEXEC         /* Executable file format error */
+#define _PDCLIB_ENOLCK          ENOLCK          /* No locks available */
+#define _PDCLIB_ENOLINK         ENOLINK         /* Link has been severed */
+#define _PDCLIB_ENOMEM          ENOMEM          /* Not enough space */
+#define _PDCLIB_ENOMSG          ENOMSG          /* No message of the desired type */
+#define _PDCLIB_ENOPROTOOPT     ENOPROTOOPT     /* Protocol not available */
+#define _PDCLIB_ENOSPC          ENOSPC          /* No space left on device */
+#define _PDCLIB_ENOSR           ENOSR           /* No STREAM resources */
+#define _PDCLIB_ENOSTR          ENOSTR          /* Not a STREAM */
+#define _PDCLIB_ENOSYS          ENOSYS          /* Function not supported */
+#define _PDCLIB_ENOTCONN        ENOTCONN        /* The socket is not connected */
+#define _PDCLIB_ENOTDIR         ENOTDIR         /* Not a directory */
+#define _PDCLIB_ENOTEMPTY       ENOTEMPTY       /* Directory not empty */
+#define _PDCLIB_ENOTRECOVERABLE ENOTRECOVERABLE /* State not recoverable */
+#define _PDCLIB_ENOTSOCK        ENOTSOCK        /* Not a socket */
+#define _PDCLIB_ENOTSUP         ENOTSUP         /* Not supported */
+#define _PDCLIB_ENOTTY          ENOTTY          /* Inappropriate I/O control operation */
+#define _PDCLIB_ENXIO           ENXIO           /* No such device or address */
+#define _PDCLIB_EOPNOTSUPP      EOPNOTSUPP      /* Operation not supported on socket */
+#define _PDCLIB_EOVERFLOW       EOVERFLOW       /* Value too large to be stored in data type */
+#define _PDCLIB_EOWNERDEAD      EOWNERDEAD      /* Previous owner died */
+#define _PDCLIB_EPERM           EPERM           /* Operation not permitted */
+#define _PDCLIB_EPIPE           EPIPE           /* Broken pipe */
+#define _PDCLIB_EPROTO          EPROTO          /* Protocol error */
+#define _PDCLIB_EPROTONOSUPPORT EPROTONOSUPPORT /* Protocol not supported */
+#define _PDCLIB_EPROTOTYPE      EPROTOTYPE      /* Protocol wrong type for socket */
+#define _PDCLIB_ERANGE          ERANGE          /* Result too large */
+#define _PDCLIB_EROFS           EROFS           /* Read-only file system */
+#define _PDCLIB_ESPIPE          ESPIPE          /* Invalid seek */
+#define _PDCLIB_ESRCH           ESRCH           /* No such process */
+#define _PDCLIB_ETIME           ETIME           /* Stream ioctl() timeout */
+#define _PDCLIB_ETIMEDOUT       ETIMEDOUT       /* Connection timed out */
+#define _PDCLIB_ETXTBSY         ETXTBSY         /* Text file busy */
+#define _PDCLIB_EWOULDBLOCK     EWOULDBLOCK     /* Operation would block */
+#define _PDCLIB_EXDEV           EXDEV           /* Cross-device link */
 
 /* The error message used for unknown error codes (generated by errno_readout */
 /* for consistency between the 'holes' in the list of defined error messages  */
@@ -644,10 +683,12 @@ typedef int _PDCLIB_fd_t;
 
 /* The default path where PDCLib should look for its locale data.             */
 /* Must end with the appropriate separator character.                         */
+// FIXME: see other notes about paths
 #define _PDCLIB_LOCALE_PATH "/usr/share/pdclib/i18n"
 
 /* The name of the environment variable that can be used to override that     */
 /* path setting.                                                              */
+// FIXME: see other notes about paths
 #define _PDCLIB_LOCALE_PATH_ENV PDCLIB_I18N
 
 /* threads ------------------------------------------------------------------ */

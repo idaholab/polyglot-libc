@@ -16,7 +16,7 @@
    along with this library; if not, see <https://www.gnu.org/licenses/>. */
 
 #include <stddef.h>
-#include <pdclib/_PDCLIB_int.h>
+#include <pdclib/_PDCLIB_internal.h>
 
 struct _PDCLIB_lc_messages_t *_PDCLIB_lc_messages = NULL;
 

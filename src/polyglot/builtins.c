@@ -32,3 +32,6 @@ extern char **environ __attribute__((alias("__environ_impl")));
 
 void (*__debug_init)() = NULL;
 
+void *__heap_begin = NULL;
+void *__heap_end = NULL;
+

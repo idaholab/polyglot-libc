@@ -1,22 +1,8 @@
-/* This file is part of the Polyglot C Library. It originates from the Public
-   Domain C Library (PDCLib).
+/* General utilities <stdlib.h>
 
-   Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
-
-   The Polyglot C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 2.1 of the License,
-   or (at your option) any later version.
-
-   The Polyglot C library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-   for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <https://www.gnu.org/licenses/>. */
-
-/* General utilities <stdlib.h> */
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
 
 #ifndef _PDCLIB_STDLIB_H
 #define _PDCLIB_STDLIB_H _PDCLIB_STDLIB_H
@@ -26,7 +12,7 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -43,9 +29,9 @@ typedef _PDCLIB_size_t size_t;
 /* TODO: atof(), strtof(), strtod(), strtold() */
 
 _PDCLIB_PUBLIC double atof( const char * nptr );
-//_PDCLIB_PUBLIC double strtod( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
-//_PDCLIB_PUBLIC float strtof( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
-//_PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC double strtod( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC float strtof( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
 
 /* Separate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
@@ -155,7 +141,7 @@ _PDCLIB_PUBLIC void * realloc( void * ptr, size_t size );
    temporary files before exiting with EXIT_FAILURE.
    abort() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void ) _PDCLIB_NORETURN;
 
 /* Register a function that will be called on quick_exit().
    At least 32 functions can be registered this way, and will be called in
@@ -177,7 +163,7 @@ _PDCLIB_PUBLIC int atexit( void ( *func )( void ) );
    and EXIT_FAILURE above.)
    exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status ) _PDCLIB_NORETURN;
 
 /* Normal process termination. Functions registered by at_quick_exit() (see
    above) are called, streams flushed, files closed and temporary files removed
@@ -185,7 +171,7 @@ _PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
    EXIT_SUCCESS and EXIT_FAILURE above.)
    quick_exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status ) _PDCLIB_NORETURN;
 
 /* Normal process termination. Functions registered by atexit()/at_quick_exit()
    (see above) are NOT CALLED. This implementation DOES flush streams, close
@@ -193,7 +179,7 @@ _PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status );
    given status. (See comment for EXIT_SUCCESS and EXIT_FAILURE above.)
    _Exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status ) _PDCLIB_NORETURN;
 
 /* Search an environment-provided key-value map for the given key name, and
    return a pointer to the associated value string (or NULL if key name cannot
