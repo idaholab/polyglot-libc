@@ -4,10 +4,6 @@ source_paths += \
     $(call expand_paths, $(libc), src/tilegx) \
 $(END_OF_LIST)
 
-#header_paths += \
-#    $(cachedir)/include/linux-tilegx
-#$(END_OF_LIST)
-
 crt_sources += \
     crt1.S \
     crti.S \

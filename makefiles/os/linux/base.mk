@@ -1,3 +1,4 @@
+# Copyright (C) 2024, Battelle Energy Alliance, LLC ALL RIGHTS RESERVED
 
 source_paths += \
     $(call expand_paths, $(libc), src/linux) \
