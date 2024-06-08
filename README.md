@@ -39,7 +39,7 @@ others. It was also incredibly useful as "documentation" of sorts of some more
 arcane, platform-specific details.
 
 
-[polyglot]: https://github.com/idaholab/polyglot-libc
+[polyglot]: https://github.com/idaholab/polyglot
 [lgpl2.1]:  COPYING
 [notice]:   NOTICE
 [pdclib]:   https://github.com/DevSolar/pdclib
